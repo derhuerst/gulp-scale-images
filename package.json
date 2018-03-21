@@ -1,0 +1,29 @@
+{
+	"name": "gulp-scale-images",
+	"description": "Gulp plugin to resize each image into multiple smaller variants.",
+	"version": "0.1.0",
+	"main": "index.js",
+	"files": [
+		"index.js"
+	],
+	"keywords": [
+		"gulp",
+		"gulpplugin",
+		"scale",
+		"resize",
+		"image",
+		"picture",
+		"sharp",
+		"parallel"
+	],
+	"author": "Jannis R <mail@jannisr.de>",
+	"homepage": "https://github.com/derhuerst/gulp-scale-images",
+	"repository": "derhuerst/gulp-scale-images",
+	"bugs": "https://github.com/derhuerst/gulp-scale-images/issues",
+	"license": "ISC",
+	"engines": {
+		"node": ">=6"
+	},
+	"dependencies": {
+	}
+}
