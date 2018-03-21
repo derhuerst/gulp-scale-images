@@ -4,7 +4,8 @@
 	"version": "0.1.0",
 	"main": "index.js",
 	"files": [
-		"index.js"
+		"index.js",
+		"lib"
 	],
 	"keywords": [
 		"gulp",
@@ -25,5 +26,6 @@
 		"node": ">=6"
 	},
 	"dependencies": {
+		"sharp": "^0.20.1"
 	}
 }
