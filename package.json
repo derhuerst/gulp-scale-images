@@ -27,5 +27,15 @@
 	},
 	"dependencies": {
 		"sharp": "^0.20.1"
+	},
+	"devDependencies": {
+		"co": "^4.6.0",
+		"tape": "^4.9.0",
+		"tape-promise": "^3.0.0",
+		"vinyl-file": "^3.0.0"
+	},
+	"scripts": {
+		"test": "node test/index.js",
+		"prepublishOnly": "npm test"
 	}
 }
