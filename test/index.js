@@ -10,6 +10,7 @@ const Vinyl = require('vinyl')
 
 const createPlugin = require('..')
 const {SHARP_INFO} = createPlugin
+const defaultComputeFileName = require('../lib/compute-file-name')
 
 const src = path.join(__dirname, 'teacup-and-saucer.jpg')
 
@@ -88,8 +89,6 @@ pTest('1 file, 500px png', co.wrap(function* (t) {
 
 		t.equal(output.cwd, input.cwd)
 		t.equal(output.base, input.base)
-		t.equal(output.path, input.path)
-		t.equal(output.relative, input.relative)
 
 		t.ok(Buffer.isBuffer(output.contents), 'output.contents must be a buffer')
 		t.ok(output.contents.byteLength > 0, 'output.contents must be filled')
@@ -151,5 +150,49 @@ pTest('1 file, 500px png, 700px jpeg', co.wrap(function* (t) {
 
 	t.end()
 }))
+
+test('defaultComputeFileName', (t) => {
+	const c = defaultComputeFileName
+	const file = new Vinyl({
+		cwd: '/',
+		base: '/foo/',
+		path: '/foo/bar.xyz',
+		contents: Buffer.alloc(1)
+	})
+	t.plan(4)
+
+	const file1 = file.clone()
+	file1[SHARP_INFO] = {
+		format: 'png',
+		width: 500,
+		height: 429,
+		size: 300000
+	}
+	const scale1 = {
+		format: 'png',
+		maxWidth: 500
+	}
+	c(file1, scale1, (err, fileName) => {
+		t.ifError(err)
+		t.equal(fileName, 'bar.500w.png')
+	})
+
+	const file2 = file.clone()
+	file2[SHARP_INFO] = {
+		format: 'jpeg',
+		width: 700,
+		height: 600,
+		size: 80000
+	}
+	const scale2 = {
+		format: 'jpeg',
+		maxWidth: 700,
+		maxHeight: 700
+	}
+	c(file2, scale2, (err, fileName) => {
+		t.ifError(err)
+		t.equal(fileName, 'bar.700w-600h.jpeg')
+	})
+})
 
 // todo: >1 files

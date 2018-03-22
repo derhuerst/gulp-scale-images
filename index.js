@@ -1,15 +1,17 @@
 'use strict'
 
+const path = require('path')
 const PluginError = require('plugin-error')
 const through = require('through2')
 
 const resize = require('./lib/resize')
 const SHARP_INFO = require('./lib/sharp-info')
+const defaultComputeFileName = require('./lib/compute-file-name')
 const pkgName = require('./package.json').name
 
 const isObj = o => o !== null && 'object' === typeof o && !Array.isArray(o)
 
-const createScaleImagesPlugin = () => {
+const createScaleImagesPlugin = (computeFileName = defaultComputeFileName) => {
 	const out = through.obj(function processFile(input, _, cb) {
 		const onErr = (msg) => {
 			const err = new PluginError(pkgName, {message: msg})
@@ -43,9 +45,23 @@ const createScaleImagesPlugin = () => {
 
 		const self = this
 		resize(input, input.scale, (err, output) => {
-			if (err) out.emit('error', err)
-			else self.push(output)
-			cb()
+			if (err) {
+				out.emit('error', err)
+				return cb()
+			}
+
+			computeFileName(output, input.scale, (err, fileName) => {
+				if (err) {
+					out.emit('error', err)
+					return cb()
+				}
+
+				const parsedPath = path.parse(output.path)
+				parsedPath.base = fileName
+				output.path = path.format(parsedPath)
+				self.push(output)
+				cb()
+			})
 		})
 	})
 
