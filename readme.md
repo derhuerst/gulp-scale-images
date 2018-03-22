@@ -15,19 +15,19 @@ Some similar libraries and why I think this one is better.
 
 - [`gulp-image-resize`](https://www.npmjs.com/package/gulp-image-resize)
 	- uses [`gm`](https://npmjs.com/package/gm) instead of [`sharp`](https://npmjs.com/package/sharp), requires `gm` to be installed
-	- supports only one config
+	- supports only one scale instruction
 - [`gulp-sharp`](https://www.npmjs.com/package/gulp-sharp)
 	- is not being maintained
 	- has no tests
-	- supports only one config
+	- supports only one scale instruction
 - [`gulp-retinize`](https://www.npmjs.com/package/gulp-retinize)
 	- doesn't seem to be maintained
 	- uses [`gm`](https://npmjs.com/package/gm) instead of [`sharp`](https://npmjs.com/package/sharp), requires `gm` to be installed
 	- only works for files on disk
-	- supports only one config
+	- supports only one scale instruction
 - [`gulp-imgconv`](https://www.npmjs.com/package/gulp-imgconv)
 	- has no tests
-	- supports only one config
+	- supports only one scale instruction
 - [`gulp-inline-resize`](https://www.npmjs.com/package/gulp-inline-resize)
 	- doesn't do *one thing*
 	- uses [`gm`](https://npmjs.com/package/gm) instead of [`sharp`](https://npmjs.com/package/sharp), requires `gm` to be installed
@@ -36,7 +36,7 @@ Some similar libraries and why I think this one is better.
 	- uses [`gm`](https://npmjs.com/package/gm) instead of [`sharp`](https://npmjs.com/package/sharp), requires `gm` to be installed
 - [`gulp-gm-limit`](https://www.npmjs.com/package/gulp-gm-limit)
 	- doesn't seem to be maintained
-	- supports only one config
+	- supports only one scale instruction
 - [`gulp-imgresize`](https://www.npmjs.com/package/gulp-imgresize)
 	- no documentation
 	- is not being maintained
@@ -51,6 +51,19 @@ npm install gulp-scale-images --save-dev
 
 
 ## Usage
+
+`gulp-scale-images` expects the instructions for each file to be in `file.scale`. They may look like this:
+
+```js
+{
+	maxWidth: 300, // maximum width, respecting the aspect ratio
+	maxHeight: 400, // maximum height, respecting the aspect ratio
+	format: 'jpeg', // optional, one of ('jpeg', 'png', 'webp')
+	withoutEnlargement: false // optional, default is true
+}
+```
+
+An example:
 
 ```js
 const gulp = require('gulp')
@@ -71,6 +84,30 @@ gulp.task('default', () => {
 	.pipe(scaleImages())
 	.pipe(gulp.dest('dist'))
 })
+```
+
+### Definining scale instructions based on metadata
+
+```js
+const readMetadata = require('gulp-scale-images/read-metadata')
+const through = require('through2')
+const scaleImages = require('gulp-scale-images')
+
+const computeScaleInstructions = (file, _, cb) => {
+	readMetadata(file.path, (err, meta) => {
+		if (err) return cb(err)
+		file.scale = {
+			maxWidth: Math.floor(meta.width / 2),
+			maxHeight: Math.floor(meta.height / 2)
+		}
+		cb(null, scale)
+	})
+}
+
+// gulp.src(…)
+.pipe(through.obj(computeScaleInstructions))
+.pipe(scaleImages())
+// gulp.dest(…)
 ```
 
 ### `gulp-scale-images` works well with
