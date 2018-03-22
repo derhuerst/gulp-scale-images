@@ -151,4 +151,4 @@ pTest('1 file, 500px png, 700px jpeg', co.wrap(function* (t) {
 	plugin.end(yield vFile.read(src)) // write input
 }))
 
-// todo: >1 profiles
+// todo: >1 files
