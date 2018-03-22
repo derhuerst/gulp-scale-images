@@ -27,7 +27,9 @@
 		"node": ">=6"
 	},
 	"dependencies": {
-		"sharp": "^0.20.1"
+		"async": "^2.6.0",
+		"sharp": "^0.20.1",
+		"through2": "^2.0.3"
 	},
 	"devDependencies": {
 		"co": "^4.6.0",
