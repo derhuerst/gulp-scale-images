@@ -1,5 +1,7 @@
 # gulp-scale-images
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/derhuerst/gulp-scale-images.svg)](https://greenkeeper.io/)
+
 **[Gulp](https://gulpjs.com) plugin to resize each image into multiple smaller variants.** Useful for [responsive images](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images).
 
 [![npm version](https://img.shields.io/npm/v/gulp-scale-images.svg)](https://www.npmjs.com/package/gulp-scale-images)
