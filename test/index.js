@@ -169,28 +169,28 @@ test('defaultComputeFileName', (t) => {
 	}
 	const scale1 = {
 		format: 'png',
-		maxWidth: 500
+		maxWidth: 500,
+		maxHeight: 500
 	}
 	c(file1, scale1, (err, fileName) => {
 		t.ifError(err)
-		t.equal(fileName, 'bar.500w.png')
+		t.equal(fileName, 'bar.500w-500h.png')
 	})
 
 	const file2 = file.clone()
 	file2[SHARP_INFO] = {
 		format: 'jpeg',
-		width: 700,
-		height: 600,
+		width: 350,
+		height: 300,
 		size: 80000
 	}
 	const scale2 = {
 		format: 'jpeg',
-		maxWidth: 700,
-		maxHeight: 700
+		maxWidth: 700
 	}
 	c(file2, scale2, (err, fileName) => {
 		t.ifError(err)
-		t.equal(fileName, 'bar.700w-600h.jpeg')
+		t.equal(fileName, 'bar.700w.jpeg')
 	})
 })
 
