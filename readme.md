@@ -9,6 +9,101 @@
 [![support me on Patreon](https://img.shields.io/badge/support%20me-on%20patreon-fa7664.svg)](https://patreon.com/derhuerst)
 
 
+## Installing
+
+```shell
+npm install gulp-scale-images --save-dev
+```
+
+
+## Usage
+
+`gulp-scale-images` expects the instructions for each file to be in `file.scale`. They may look like this:
+
+```js
+{
+	maxWidth: 300, // maximum width, respecting the aspect ratio
+	maxHeight: 400, // maximum height, respecting the aspect ratio
+	format: 'jpeg', // optional, one of ('jpeg', 'png', 'webp')
+	withoutEnlargement: false // optional, default is true
+}
+```
+
+An example, we're going to generate *two* smaller variants for each input file. We're going to use [`flat-map`](https://npmjs.com/package/flat-map) for this:
+
+```js
+const gulp = require('gulp')
+const flatMap = require('flat-map').default
+const scaleImages = require('gulp-scale-images')
+
+const twoVariantsPerFile = (file, cb) => {
+	const pngFile = file.clone()
+	pngFile.scale = {maxWidth: 500, maxHeight: 500, format: 'png'}
+	const jpegFile = file.clone()
+	jpegFile.scale = {maxWidth: 700, maxHeight: 700, format: 'jpeg'}
+	cb(null, [pngFile, jpegFile])
+}
+
+gulp.src('src/*.{jpeg,jpg,png,gif}')
+.pipe(flatMap(twoVariantsPerFile))
+.pipe(scaleImages())
+.pipe(gulp.dest(…))
+```
+
+### Definining scale instructions based on metadata
+
+You can let `gulp-scale-images` read the image metadata first, to device what to do with the file:
+
+```js
+const readMetadata = require('gulp-scale-images/read-metadata')
+const through = require('through2')
+const scaleImages = require('gulp-scale-images')
+
+const computeScaleInstructions = (file, _, cb) => {
+	readMetadata(file.path, (err, meta) => {
+		if (err) return cb(err)
+		file.scale = {
+			maxWidth: Math.floor(meta.width / 2),
+			maxHeight: Math.floor(meta.height / 2)
+		}
+		cb(null, scale)
+	})
+}
+
+gulp.src(…)
+.pipe(through.obj(computeScaleInstructions))
+.pipe(scaleImages())
+.pipe(gulp.dest(…))
+```
+
+### Custom output file names
+
+By default, `gulp-scale-images` will use `{basename}.{maxWidth}w-{maxHeight}h.{format}` (e.g. `foo.500w-300h.jpeg`). You can define a custom logic though:
+
+```js
+const path = require('path')
+const scaleImages = require('gulp-scale-images')
+
+const computeFileName = (output, scale, cb) => {
+	const fileName = [
+		path.basename(output.path, output.extname), // strip extension
+		scale.maxWidth + 'w',
+		scale.format || output.extname
+	].join('.')
+}
+
+gulp.src(…)
+.pipe(through.obj(computeScaleInstructions))
+.pipe(scaleImages(computeFileName)) // not that we pass computeFileName here
+.pipe(gulp.dest(…))
+```
+
+### `gulp-scale-images` works well with
+
+- [`flat-map`](https://www.npmjs.com/package/flat-map) – A flat map implementation for node streams. (One chunk in, `n` chunks out.)
+- [`replace-ext`](https://www.npmjs.com/package/replace-ext) – Replaces a file extension with another one.
+
+
 ## Similar libraries
 
 Some similar libraries and why I think this one is better.
@@ -41,100 +136,6 @@ Some similar libraries and why I think this one is better.
 	- no documentation
 	- is not being maintained
 	- has no tests
-
-
-## Installing
-
-```shell
-npm install gulp-scale-images --save-dev
-```
-
-
-## Usage
-
-`gulp-scale-images` expects the instructions for each file to be in `file.scale`. They may look like this:
-
-```js
-{
-	maxWidth: 300, // maximum width, respecting the aspect ratio
-	maxHeight: 400, // maximum height, respecting the aspect ratio
-	format: 'jpeg', // optional, one of ('jpeg', 'png', 'webp')
-	withoutEnlargement: false // optional, default is true
-}
-```
-
-An example:
-
-```js
-const gulp = require('gulp')
-const flatMap = require('flat-map').default
-const scaleImages = require('gulp-scale-images')
-
-const twoVariantsPerFile = (file, cb) => {
-	const pngFile = file.clone()
-	pngFile.scale = png500
-	const jpegFile = file.clone()
-	jpegFile.scale = jpeg700
-	cb(null, [pngFile, jpegFile])
-}
-
-gulp.task('default', () => {
-	return gulp.src('src/*.{jpeg,jpg,png,gif}')
-	.pipe(flatMap(twoVariantsPerFile))
-	.pipe(scaleImages())
-	.pipe(gulp.dest('dist'))
-})
-```
-
-### Definining scale instructions based on metadata
-
-```js
-const readMetadata = require('gulp-scale-images/read-metadata')
-const through = require('through2')
-const scaleImages = require('gulp-scale-images')
-
-const computeScaleInstructions = (file, _, cb) => {
-	readMetadata(file.path, (err, meta) => {
-		if (err) return cb(err)
-		file.scale = {
-			maxWidth: Math.floor(meta.width / 2),
-			maxHeight: Math.floor(meta.height / 2)
-		}
-		cb(null, scale)
-	})
-}
-
-// gulp.src(…)
-.pipe(through.obj(computeScaleInstructions))
-.pipe(scaleImages())
-// gulp.dest(…)
-```
-
-### Custom scaled file names
-
-By default, `gulp-scale-images` will use `{basename}.{maxWidth}w-{maxHeight}h.{format}` (e.g. `foo.500w-300h.jpeg`). You can define a custom logic though:
-
-```js
-const path = require('path')
-const scaleImages = require('gulp-scale-images')
-
-const computeFileName = (output, scale, cb) => {
-	const fileName = [
-		path.basename(output.path, output.extname), // strip extension
-		scale.maxWidth + 'w',
-		scale.format || output.extname
-	].join('.')
-}
-
-// …
-// scaleImages(computeFileName)
-// …
-```
-
-### `gulp-scale-images` works well with
-
-- [`flat-map`](https://www.npmjs.com/package/flat-map) – A flat map implementation for node streams. (One chunk in, `n` chunks out.)
-- [`replace-ext`](https://www.npmjs.com/package/replace-ext) – Replaces a file extension with another one.
 
 
 ## Contributing
