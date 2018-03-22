@@ -35,6 +35,7 @@
 		"co": "^4.6.0",
 		"tape": "^4.9.0",
 		"tape-promise": "^3.0.0",
+		"vinyl": "^2.1.0",
 		"vinyl-file": "^3.0.0"
 	},
 	"scripts": {

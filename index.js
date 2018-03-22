@@ -33,6 +33,18 @@ const createScaleImagesPlugin = (configs) => {
 	if (!isProduction) validateConfigs(configs)
 
 	const out = through.obj(function processFile(input, _, cb) {
+		if (!input || 'function' !== typeof input.isDirectory) {
+			const err = new Error('invalid vinyl file passed')
+			err.file = input
+			out.emit('error', err)
+			cb()
+			return
+		}
+		if (input.isDirectory()) { // ignore directories
+			cb()
+			return
+		}
+
 		const self = this
 		const processConfig = (cfg, cb) => {
 			resize(input, cfg, (err, output) => {

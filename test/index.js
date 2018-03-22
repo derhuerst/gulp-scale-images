@@ -5,6 +5,7 @@ const pifyTape = require('tape-promise').default
 const test = require('tape')
 const co = require('co')
 const vFile = require('vinyl-file')
+const Vinyl = require('vinyl')
 
 const createPlugin = require('..')
 const {SHARP_INFO} = createPlugin
@@ -49,6 +50,39 @@ test('throws on invalid usage', (t) => {
 	t.throws(() => createPlugin([valid, invalid1]))
 	t.end()
 })
+
+pTest('emits error on invalid input', co.wrap(function* (t) {
+	const plugin = createPlugin([png500])
+	const invalidInput = {}
+
+	plugin.once('error', (err) => {
+		t.ok(err)
+		t.equal(err.file, invalidInput)
+		t.end()
+	})
+	plugin.end(invalidInput)
+}))
+
+pTest('skips directories', co.wrap(function* (t) {
+	const plugin = createPlugin([png500])
+	const dir = new Vinyl({
+		path: __dirname,
+		stat: {
+			isDirectory: () => true,
+			isFile: false
+		}
+	})
+
+	plugin.on('data', (output) => {
+		t.fail('dir came through')
+	})
+
+	plugin.on('end', (output) => {
+		t.pass('ended')
+		t.end()
+	})
+	plugin.end(dir)
+}))
 
 pTest('1 file, 500px png', co.wrap(function* (t) {
 	const plugin = createPlugin([png500])
