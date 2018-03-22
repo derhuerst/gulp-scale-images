@@ -5,6 +5,7 @@
 	"main": "index.js",
 	"files": [
 		"index.js",
+		"read-metadata.js",
 		"lib",
 		"example.js"
 	],
