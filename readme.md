@@ -19,7 +19,26 @@ npm install gulp-scale-images --save-dev
 ## Usage
 
 ```js
-todo
+const gulp = require('gulp')
+const scaleImages = require('gulp-scale-images')
+
+gulp.task('default', () => {
+	return gulp.src('src/*.{jpeg,jpg,png,gif}')
+	.pipe(scaleImages([
+		{
+			maxWidth: 500,
+			maxHeight: 700,
+			format: 'png'
+		},
+		{
+			maxWidth: 1000,
+			maxHeight: 1000,
+			format: 'jpeg',
+			allowEnlargement: true
+		}
+	]))
+	.pipe(gulp.dest('dist'))
+})
 ```
 
 
