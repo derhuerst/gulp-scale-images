@@ -110,6 +110,27 @@ const computeScaleInstructions = (file, _, cb) => {
 // gulp.dest(…)
 ```
 
+### Custom scaled file names
+
+By default, `gulp-scale-images` will use `{basename}.{maxWidth}w-{maxHeight}h.{format}` (e.g. `foo.500w-300h.jpeg`). You can define a custom logic though:
+
+```js
+const path = require('path')
+const scaleImages = require('gulp-scale-images')
+
+const computeFileName = (output, scale, cb) => {
+	const fileName = [
+		path.basename(output.path, output.extname), // strip extension
+		scale.maxWidth + 'w',
+		scale.format || output.extname
+	].join('.')
+}
+
+// …
+// scaleImages(computeFileName)
+// …
+```
+
 ### `gulp-scale-images` works well with
 
 - [`flat-map`](https://www.npmjs.com/package/flat-map) – A flat map implementation for node streams. (One chunk in, `n` chunks out.)

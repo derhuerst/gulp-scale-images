@@ -24,6 +24,7 @@ const mapper = flatMap((file, cb) => {
 
 const plugin = mapper.pipe(scaleImages())
 plugin.on('data', (output) => {
+	console.log(output.path)
 	console.log(output)
 	console.log(output[SHARP_INFO])
 })
