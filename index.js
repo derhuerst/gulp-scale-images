@@ -2,72 +2,49 @@
 
 const PluginError = require('plugin-error')
 const through = require('through2')
-const eachSeries = require('async/eachSeries')
 
 const resize = require('./lib/resize')
 const pkgName = require('./package.json').name
 
-const isProduction = process.env.NODE_ENV === 'production'
-
 const isObj = o => o !== null && 'object' === typeof o && !Array.isArray(o)
 
-const createErr = (msg, file) => {
-	const err = new PluginError(pkgName, {message: msg})
-	if (file) err.file = file
-	return err
-}
-
-const validateConfigs = (cfgs) => {
-	if (!Array.isArray(cfgs)) throw createErr('configs must be an array')
-	if (!cfgs.length) throw createErr('configs is empty')
-	for (let cfg of cfgs) {
-		if (!isObj(cfg)) throw createErr('cfg must be an object')
-		if ('number' !== typeof cfg.maxWidth) {
-			throw createErr('cfg.maxWidth must be a number')
-		}
-		if ('number' !== typeof cfg.maxHeight) {
-			throw createErr('cfg.maxHeight must be a number')
-		}
-		if (cfg.format && 'string' !== typeof cfg.format) {
-			throw createErr('cfg.format must be a string')
-		}
-		if (cfg.withoutEnlargement && 'boolean' !== typeof cfg.withoutEnlargement) {
-			throw createErr('cfg.withoutEnlargement must be a boolean')
-		}
-	}
-}
-
-const createScaleImagesPlugin = (configs) => {
-	if (!isProduction) validateConfigs(configs)
-
+const createScaleImagesPlugin = () => {
 	const out = through.obj(function processFile(input, _, cb) {
+		const onErr = (msg) => {
+			const err = new PluginError(pkgName, {message: msg})
+			err.file = input
+			out.emit('error', err)
+			cb()
+		}
+
 		if (!input || 'function' !== typeof input.isDirectory) {
-			out.emit('error', createErr('invalid vinyl file passed', input))
-			return cb()
+			return onErr('invalid vinyl file passed')
 		}
-		if (input.isStream()) {
-			out.emit('error', createErr('streaming files are not supported', input))
-			return cb()
+		if (input.isStream()) return onErr('streaming files are not supported')
+		if (input.isDirectory()) return cb() // ignore directories
+
+		const s = input.scale
+		if (!isObj(s)) {
+			return emitErr('file.scale must be an object')
 		}
-		if (input.isDirectory()) { // ignore directories
-			return cb()
+		if ('number' !== typeof s.maxWidth) {
+			return emitErr('file.scale.maxWidth must be a number')
+		}
+		if ('number' !== typeof s.maxHeight) {
+			return emitErr('file.scale.maxHeight must be a number')
+		}
+		if (s.format && 'string' !== typeof s.format) {
+			return emitErr('file.scale.format must be a string')
+		}
+		if (s.withoutEnlargement && 'boolean' !== typeof s.withoutEnlargement) {
+			return emitErr('file.scale.withoutEnlargement must be a boolean')
 		}
 
 		const self = this
-		const processConfig = (cfg, cb) => {
-			resize(input, cfg, (err, output) => {
-				if (err) return cb(err)
-				self.push(output)
-				cb()
-			})
-		}
-
-		eachSeries(configs, processConfig, (err) => {
-			if (err) {
-				out.emit('error', err)
-				cb(null)
-				out.destroy()
-			} else cb()
+		resize(input, input.scale, (err, output) => {
+			if (err) out.emit('error', err)
+			else self.push(output)
+			cb()
 		})
 	})
 
