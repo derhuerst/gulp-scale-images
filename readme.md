@@ -1,6 +1,6 @@
 # gulp-scale-images
 
-**[Gulp](https://gulpjs.com) plugin to resize each image into multiple smaller variants.** Useful for [responsive images](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images).
+**[Gulp](https://gulpjs.com) plugin to make each image smaller. Combined with [`flat-map`](https://npmjs.com/package/flat-map), you can create multiple variantes per image**, which is useful for [responsive images](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images).
 
 [![npm version](https://img.shields.io/npm/v/gulp-scale-images.svg)](https://www.npmjs.com/package/gulp-scale-images)
 [![build status](https://api.travis-ci.org/derhuerst/gulp-scale-images.svg?branch=master)](https://travis-ci.org/derhuerst/gulp-scale-images)
@@ -54,29 +54,28 @@ npm install gulp-scale-images --save-dev
 
 ```js
 const gulp = require('gulp')
+const flatMap = require('flat-map').default
 const scaleImages = require('gulp-scale-images')
+
+const twoVariantsPerFile = (file, cb) => {
+	const pngFile = file.clone()
+	pngFile.scale = png500
+	const jpegFile = file.clone()
+	jpegFile.scale = jpeg700
+	cb(null, [pngFile, jpegFile])
+}
 
 gulp.task('default', () => {
 	return gulp.src('src/*.{jpeg,jpg,png,gif}')
-	.pipe(scaleImages([
-		{
-			maxWidth: 500,
-			maxHeight: 700,
-			format: 'png'
-		},
-		{
-			maxWidth: 1000,
-			maxHeight: 1000,
-			format: 'jpeg',
-			allowEnlargement: true
-		}
-	]))
+	.pipe(flatMap(twoVariantsPerFile))
+	.pipe(scaleImages())
 	.pipe(gulp.dest('dist'))
 })
 ```
 
 ### `gulp-scale-images` works well with
 
+- [`flat-map`](https://www.npmjs.com/package/flat-map) – A flat map implementation for node streams. (One chunk in, `n` chunks out.)
 - [`replace-ext`](https://www.npmjs.com/package/replace-ext) – Replaces a file extension with another one.
 
 
