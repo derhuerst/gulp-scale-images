@@ -22,12 +22,14 @@ npm install gulp-scale-images --save-dev
 
 ```js
 {
-	maxWidth: 300, // maximum width, respecting the aspect ratio
-	maxHeight: 400, // maximum height, respecting the aspect ratio
+	maxWidth: 300, // optional maximum width, respecting the aspect ratio
+	maxHeight: 400, // optional maximum height, respecting the aspect ratio
 	format: 'jpeg', // optional, one of ('jpeg', 'png', 'webp')
 	withoutEnlargement: false // optional, default is true
 }
 ```
+
+*Note*: You must specify at least one of `maxWidth` and `maxHeight`.
 
 An example, we're going to generate *two* smaller variants for each input file. We're going to use [`flat-map`](https://npmjs.com/package/flat-map) for this:
 
@@ -40,7 +42,7 @@ const twoVariantsPerFile = (file, cb) => {
 	const pngFile = file.clone()
 	pngFile.scale = {maxWidth: 500, maxHeight: 500, format: 'png'}
 	const jpegFile = file.clone()
-	jpegFile.scale = {maxWidth: 700, maxHeight: 700, format: 'jpeg'}
+	jpegFile.scale = {maxWidth: 700, format: 'jpeg'}
 	cb(null, [pngFile, jpegFile])
 }
 

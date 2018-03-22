@@ -30,11 +30,14 @@ const createScaleImagesPlugin = (computeFileName = defaultComputeFileName) => {
 		if (!isObj(s)) {
 			return onErr('file.scale must be an object')
 		}
-		if ('number' !== typeof s.maxWidth) {
+		if (('maxWidth' in s) && 'number' !== typeof s.maxWidth) {
 			return onErr('file.scale.maxWidth must be a number')
 		}
-		if ('number' !== typeof s.maxHeight) {
+		if (('maxHeight' in s) && 'number' !== typeof s.maxHeight) {
 			return onErr('file.scale.maxHeight must be a number')
+		}
+		if (!('maxWidth' in s) && !('maxHeight' in s)) {
+			return onErr('either file.scale.maxWidth or file.scale.maxHeight')
 		}
 		if (s.format && 'string' !== typeof s.format) {
 			return onErr('file.scale.format must be a string')

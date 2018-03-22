@@ -21,7 +21,6 @@ const png500 = {
 }
 const jpeg700 = {
 	maxWidth: 700,
-	maxHeight: 700,
 	format: 'jpeg'
 }
 
@@ -79,7 +78,7 @@ pTest('skips directories', co.wrap(function* (t) {
 	plugin.end(dir)
 }))
 
-pTest('1 file, 500px png', co.wrap(function* (t) {
+pTest('1 file, 500x500 png', co.wrap(function* (t) {
 	const plugin = createPlugin()
 	const input = yield vFile.read(src)
 	input.scale = png500
@@ -109,7 +108,7 @@ pTest('1 file, 500px png', co.wrap(function* (t) {
 	plugin.end(input) // write input
 }))
 
-pTest('1 file, 500px png, 700px jpeg', co.wrap(function* (t) {
+pTest('1 file, 500x500 png, 700x? jpeg', co.wrap(function* (t) {
 	const plugin = createPlugin()
 
 	const in1 = yield vFile.read(src)
@@ -146,7 +145,7 @@ pTest('1 file, 500px png, 700px jpeg', co.wrap(function* (t) {
 	t.ok(info1.height <= png500.maxHeight)
 	t.equal(info2.width, jpeg700.maxWidth)
 	t.equal(typeof info2.height, 'number')
-	t.ok(info2.height <= jpeg700.maxHeight)
+	t.ok(info2.height > 0)
 
 	t.end()
 }))
