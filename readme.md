@@ -68,7 +68,7 @@ const computeScaleInstructions = (file, _, cb) => {
 			maxWidth: Math.floor(meta.width / 2),
 			maxHeight: Math.floor(meta.height / 2)
 		}
-		cb(null, scale)
+		cb(null, file)
 	})
 }
 
@@ -92,6 +92,7 @@ const computeFileName = (output, scale, cb) => {
 		scale.maxWidth + 'w',
 		scale.format || output.extname
 	].join('.')
+	cb(null, fileName)
 }
 
 gulp.src(…)
