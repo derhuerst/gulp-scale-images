@@ -37,7 +37,7 @@
 		"flat-map": "^1.0.0",
 		"p-event": "^2.0.0",
 		"tape": "^4.9.0",
-		"tape-promise": "^3.0.0",
+		"tape-promise": "^4.0.0",
 		"vinyl": "^2.1.0",
 		"vinyl-file": "^3.0.0"
 	},
