@@ -30,7 +30,7 @@
 	"dependencies": {
 		"plugin-error": "^1.0.1",
 		"sharp": "^0.21.0",
-		"through2": "^2.0.3"
+		"through2": "^3.0.0"
 	},
 	"devDependencies": {
 		"co": "^4.6.0",
