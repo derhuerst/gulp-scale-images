@@ -11,6 +11,7 @@ const Vinyl = require('vinyl')
 const createPlugin = require('..')
 const {SHARP_INFO} = createPlugin
 const defaultComputeFileName = require('../lib/compute-file-name')
+const resize = require('../lib/resize')
 
 const src = path.join(__dirname, 'teacup-and-saucer.jpg')
 
@@ -193,5 +194,40 @@ test('defaultComputeFileName', (t) => {
 		t.equal(fileName, 'bar.700w.jpeg')
 	})
 })
+
+pTest('formatOptions are passed to sharp', co.wrap(function* (t) {
+	const file = yield vFile.read(src)
+
+	const file1 = file.clone()
+	const scale1 = {
+		format: 'webp',
+		maxWidth: 100,
+		formatOptions: {
+			quality: 80
+		},
+		maxWidth: Number.MAX_SAFE_INTEGER
+	}
+	const defaultFileSize = yield new Promise((res) => resize(file1, scale1, (err, newFile1) => {
+		t.ifError(err)
+		res(newFile1[SHARP_INFO].size)
+	}))
+
+	const file2 = file.clone()
+	const scale2 = {
+		format: 'webp',
+		maxWidth: 100,
+		formatOptions: {
+			quality: 100
+		},
+		maxWidth: Number.MAX_SAFE_INTEGER
+	}
+
+	resize(file2, scale2, (err, newFile2) => {
+		t.ifError(err)
+		t.ok(newFile2[SHARP_INFO].size > defaultFileSize)
+	});
+
+	t.end()
+}))
 
 // todo: >1 files
