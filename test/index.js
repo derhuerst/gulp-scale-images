@@ -208,8 +208,10 @@ pTest('formatOptions are passed to sharp', co.wrap(function* (t) {
 		maxWidth: Number.MAX_SAFE_INTEGER
 	}
 	const defaultFileSize = yield new Promise((res, rej) => resize(file1, scale1, (err, newFile1) => {
-		if (err) rej(err);
-		res(newFile1[SHARP_INFO].size)
+		if (err)
+			rej(err)
+		else
+			res(newFile1[SHARP_INFO].size)
 	}))
 
 	const file2 = file.clone()
@@ -223,9 +225,12 @@ pTest('formatOptions are passed to sharp', co.wrap(function* (t) {
 	}
 
 	yield new Promise((res, rej) => resize(file2, scale2, (err, newFile2) => {
-		if (err) rej(err)
-		t.ok(newFile2[SHARP_INFO].size > defaultFileSize)
-		res()
+		if (err)
+			rej(err)
+		else {
+			t.ok(newFile2[SHARP_INFO].size > defaultFileSize)
+			res()
+		}
 	}));
 
 	t.end()
