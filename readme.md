@@ -64,6 +64,7 @@ const scaleImages = require('gulp-scale-images')
 const computeScaleInstructions = (file, _, cb) => {
 	readMetadata(file.path, (err, meta) => {
 		if (err) return cb(err)
+		file = file.clone()
 		file.scale = {
 			maxWidth: Math.floor(meta.width / 2),
 			maxHeight: Math.floor(meta.height / 2)
