@@ -25,11 +25,14 @@ npm install gulp-scale-images --save-dev
 	maxWidth: 300, // optional maximum width, respecting the aspect ratio
 	maxHeight: 400, // optional maximum height, respecting the aspect ratio
 	format: 'jpeg', // optional, one of ('jpeg', 'png', 'webp')
-	withoutEnlargement: false // optional, default is true
+	withoutEnlargement: false, // optional, default is true
+	formatOptions: {} // optional, additional format options for sharp engine
 }
 ```
 
 *Note*: You must specify at least one of `maxWidth` and `maxHeight`.
+
+You can pass additional format options to Sharp engine using `formatOptions` parameter. Docs can be found at [Sharp API](http://sharp.pixelplumbing.com/en/stable/api-output/).
 
 An example, we're going to generate *two* smaller variants for each input file. We're going to use [`flat-map`](https://npmjs.com/package/flat-map) for this:
 
