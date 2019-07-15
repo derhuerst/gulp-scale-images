@@ -1,7 +1,7 @@
 {
 	"name": "gulp-scale-images",
 	"description": "Gulp plugin to resize each image into multiple smaller variants.",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"main": "index.js",
 	"files": [
 		"index.js",
@@ -29,7 +29,7 @@
 	},
 	"dependencies": {
 		"plugin-error": "^1.0.1",
-		"sharp": "^0.21.0",
+		"sharp": "^0.22.1",
 		"through2": "^3.0.0"
 	},
 	"devDependencies": {
