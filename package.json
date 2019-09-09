@@ -1,7 +1,7 @@
 {
 	"name": "gulp-scale-images",
 	"description": "Gulp plugin to resize each image into multiple smaller variants.",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"main": "index.js",
 	"files": [
 		"index.js",
