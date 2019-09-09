@@ -26,7 +26,7 @@ npm install gulp-scale-images --save-dev
 	maxHeight: 400, // optional maximum height
 	format: 'jpeg', // optional, one of ('jpeg', 'png', 'webp')
 	withoutEnlargement: false, // optional, default is true
-	fit: 'inside' // optional, default is 'cover', one of ('cover', 'contain', 'fill', 'inside', 'outside')
+	fit: 'inside', // optional, default is 'cover', one of ('cover', 'contain', 'fill', 'inside', 'outside')
 	formatOptions: {} // optional, additional format options for sharp engine
 }
 ```
