@@ -42,6 +42,9 @@ const createScaleImagesPlugin = (computeFileName = defaultComputeFileName) => {
 		if (s.format && 'string' !== typeof s.format) {
 			return onErr('file.scale.format must be a string')
 		}
+		if (s.fit && 'string' !== typeof s.format) {
+			return onErr('file.scale.fit must be a string')
+		}
 		if (s.withoutEnlargement && 'boolean' !== typeof s.withoutEnlargement) {
 			return onErr('file.scale.withoutEnlargement must be a boolean')
 		}
