@@ -156,7 +156,7 @@ test('defaultComputeFileName', (t) => {
 	const file = new Vinyl({
 		cwd: '/',
 		base: '/foo/',
-		path: '/foo/bar.xyz',
+		path: '/foo/bar.xyz.tiff',
 		contents: Buffer.alloc(1)
 	})
 	t.plan(4)
@@ -175,7 +175,7 @@ test('defaultComputeFileName', (t) => {
 	}
 	c(file1, scale1, (err, fileName) => {
 		t.ifError(err)
-		t.equal(fileName, 'bar.500w-500h.png')
+		t.equal(fileName, 'bar.xyz.500w-500h.png')
 	})
 
 	const file2 = file.clone()
@@ -191,7 +191,7 @@ test('defaultComputeFileName', (t) => {
 	}
 	c(file2, scale2, (err, fileName) => {
 		t.ifError(err)
-		t.equal(fileName, 'bar.700w.jpeg')
+		t.equal(fileName, 'bar.xyz.700w.jpeg')
 	})
 })
 
