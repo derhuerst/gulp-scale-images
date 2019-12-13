@@ -135,7 +135,7 @@ Some similar libraries and why I think this one is better.
 - [`gulp-inline-resize`](https://www.npmjs.com/package/gulp-inline-resize)
 	- doesn't do *one thing*
 	- uses [`gm`](https://npmjs.com/package/gm) instead of [`sharp`](https://npmjs.com/package/sharp), requires `gm` to be installed
-- [`gupl-unretina`](https://www.npmjs.com/package/gupl-unretina)
+- [`gulp-unretina`](https://www.npmjs.com/package/gulp-unretina)
 	- less flexible
 	- uses [`gm`](https://npmjs.com/package/gm) instead of [`sharp`](https://npmjs.com/package/sharp), requires `gm` to be installed
 - [`gulp-gm-limit`](https://www.npmjs.com/package/gulp-gm-limit)
