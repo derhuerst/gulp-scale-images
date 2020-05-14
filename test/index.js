@@ -3,7 +3,6 @@
 const path = require('path')
 const pifyTape = require('tape-promise').default
 const test = require('tape')
-const co = require('co')
 const pEvent = require('p-event')
 const vFile = require('vinyl-file')
 const Vinyl = require('vinyl')
@@ -28,7 +27,8 @@ const jpeg700 = {
 const isObj = o => o !== null && 'object' === typeof o && !Array.isArray(o)
 const pTest = pifyTape(test)
 
-pTest('emits erros on invalid input', co.wrap(function* (t) {
+
+pTest('emits erros on invalid input', async (t) => {
 	const plugin = createPlugin()
 	const writeImmediate = d => setImmediate(() => plugin.write(d))
 
@@ -41,24 +41,22 @@ pTest('emits erros on invalid input', co.wrap(function* (t) {
 
 	const invalid1 = Object.assign({}, valid, {maxWidth: 'foo'})
 	writeImmediate(invalid1)
-	t.ok(yield pEvent(plugin, 'error'))
+	t.ok(await pEvent(plugin, 'error'))
 
 	const invalid2 = Object.assign({}, valid, {maxHeight: 'foo'})
 	writeImmediate(invalid2)
-	t.ok(yield pEvent(plugin, 'error'))
+	t.ok(await pEvent(plugin, 'error'))
 
 	const invalid3 = Object.assign({}, valid, {format: 1})
 	writeImmediate(invalid3)
-	t.ok(yield pEvent(plugin, 'error'))
+	t.ok(await pEvent(plugin, 'error'))
 
 	const invalid4 = Object.assign({}, valid, {withoutEnlargement: 'foo'})
 	writeImmediate(invalid4)
-	t.ok(yield pEvent(plugin, 'error'))
+	t.ok(await pEvent(plugin, 'error'))
+})
 
-	t.end()
-}))
-
-pTest('skips directories', co.wrap(function* (t) {
+pTest('skips directories', async (t) => {
 	const plugin = createPlugin([png500])
 	const dir = new Vinyl({
 		path: __dirname,
@@ -77,51 +75,51 @@ pTest('skips directories', co.wrap(function* (t) {
 		t.end()
 	})
 	plugin.end(dir)
-}))
+})
 
-pTest('1 file, 500x500 png', co.wrap(function* (t) {
+pTest('1 file, 500x500 png', async (t) => {
 	const plugin = createPlugin()
-	const input = yield vFile.read(src)
+	const input = await vFile.read(src)
 	input.scale = png500
+	plugin.end(input)
 
-	plugin.on('data', (output) => {
-		t.ok(isObj(output), 'no file')
-
-		t.equal(output.cwd, input.cwd)
-		t.equal(output.base, input.base)
-
-		t.ok(Buffer.isBuffer(output.contents), 'output.contents must be a buffer')
-		t.ok(output.contents.byteLength > 0, 'output.contents must be filled')
-
-		const info = output[SHARP_INFO]
-		t.ok(isObj(info))
-		t.equal(typeof info.size, 'number')
-		t.ok(info.size >= 0)
-
-		// image is landscape, so width will be maxed out
-		t.equal(info.width, png500.maxWidth)
-		t.equal(typeof info.height, 'number')
-		t.ok(info.height <= png500.maxHeight)
-
-		t.end()
+	const output = await new Promise((resolve, reject) => {
+		plugin.once('data', resolve)
+		plugin.once('error', reject)
 	})
 
-	plugin.end(input) // write input
-}))
+	t.ok(isObj(output), 'no file')
 
-pTest('1 file, 500x500 png, 700x? jpeg', co.wrap(function* (t) {
+	t.equal(output.cwd, input.cwd)
+	t.equal(output.base, input.base)
+
+	t.ok(Buffer.isBuffer(output.contents), 'output.contents must be a buffer')
+	t.ok(output.contents.byteLength > 0, 'output.contents must be filled')
+
+	const info = output[SHARP_INFO]
+	t.ok(isObj(info))
+	t.equal(typeof info.size, 'number')
+	t.ok(info.size >= 0)
+
+	// image is landscape, so width will be maxed out
+	t.equal(info.width, png500.maxWidth)
+	t.equal(typeof info.height, 'number')
+	t.ok(info.height <= png500.maxHeight)
+})
+
+pTest('1 file, 500x500 png, 700x? jpeg', async (t) => {
 	const plugin = createPlugin()
 
-	const in1 = yield vFile.read(src)
+	const in1 = await vFile.read(src)
 	in1.scale = png500
-	const in2 = yield vFile.read(src)
+	const in2 = await vFile.read(src)
 	in2.scale = jpeg700
 
 	setImmediate(() => plugin.write(in1))
-	const out1 = yield pEvent(plugin, 'data')
+	const out1 = await pEvent(plugin, 'data')
 
 	setImmediate(() => plugin.end(in2))
-	const out2 = yield pEvent(plugin, 'data')
+	const out2 = await pEvent(plugin, 'data')
 
 	t.ok(isObj(out1), 'no file')
 	t.ok(isObj(out2), 'no file')
@@ -149,7 +147,7 @@ pTest('1 file, 500x500 png, 700x? jpeg', co.wrap(function* (t) {
 	t.ok(info2.height > 0)
 
 	t.end()
-}))
+})
 
 test('defaultComputeFileName', (t) => {
 	const c = defaultComputeFileName
@@ -195,8 +193,8 @@ test('defaultComputeFileName', (t) => {
 	})
 })
 
-pTest('formatOptions are passed to sharp', co.wrap(function* (t) {
-	const file = yield vFile.read(src)
+pTest('formatOptions are passed to sharp', async (t) => {
+	const file = await vFile.read(src)
 
 	const file1 = file.clone()
 	const scale1 = {
@@ -207,7 +205,7 @@ pTest('formatOptions are passed to sharp', co.wrap(function* (t) {
 		},
 		maxWidth: Number.MAX_SAFE_INTEGER
 	}
-	const defaultFileSize = yield new Promise((res, rej) => resize(file1, scale1, (err, newFile1) => {
+	const defaultFileSize = await new Promise((res, rej) => resize(file1, scale1, (err, newFile1) => {
 		if (err)
 			rej(err)
 		else
@@ -224,7 +222,7 @@ pTest('formatOptions are passed to sharp', co.wrap(function* (t) {
 		maxWidth: Number.MAX_SAFE_INTEGER
 	}
 
-	yield new Promise((res, rej) => resize(file2, scale2, (err, newFile2) => {
+	await new Promise((res, rej) => resize(file2, scale2, (err, newFile2) => {
 		if (err)
 			rej(err)
 		else {
@@ -234,6 +232,6 @@ pTest('formatOptions are passed to sharp', co.wrap(function* (t) {
 	}));
 
 	t.end()
-}))
+})
 
 // todo: >1 files

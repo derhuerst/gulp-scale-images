@@ -33,7 +33,6 @@
 		"through2": "^3.0.0"
 	},
 	"devDependencies": {
-		"co": "^4.6.0",
 		"flat-map": "^1.0.0",
 		"p-event": "^4.1.0",
 		"tape": "^5.0.0",
