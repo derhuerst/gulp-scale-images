@@ -28,6 +28,7 @@ npm install gulp-scale-images --save-dev
 	withoutEnlargement: false, // optional, default is true
 	fit: 'inside', // optional, default is 'cover', one of ('cover', 'contain', 'fill', 'inside', 'outside')
 	rotate: true, // optional
+	metadata: false, // copy metadata over?
 	formatOptions: {} // optional, additional format options for sharp engine
 }
 ```

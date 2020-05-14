@@ -11,7 +11,7 @@ const src = path.join(__dirname, 'test', 'teacup-and-saucer.jpg')
 const input = vFile.readSync(src)
 
 const png500 = {maxWidth: 500, maxHeight: 500, format: 'png'}
-const jpeg700 = {maxWidth: 700, format: 'jpeg'}
+const jpeg700 = {maxWidth: 700, format: 'jpeg', metadata: true}
 
 // per input file: 1 500px png, 1 700px jpeg
 const mapper = flatMap((file, cb) => {

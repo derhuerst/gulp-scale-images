@@ -3,9 +3,12 @@
 const path = require('path')
 const pifyTape = require('tape-promise').default
 const test = require('tape')
+const {promisify} = require('util')
 const pEvent = require('p-event')
 const vFile = require('vinyl-file')
 const Vinyl = require('vinyl')
+const sharp = require('sharp')
+const parseExif = require('exif-reader')
 
 const createPlugin = require('..')
 const {SHARP_INFO} = createPlugin
@@ -27,6 +30,7 @@ const jpeg700 = {
 const isObj = o => o !== null && 'object' === typeof o && !Array.isArray(o)
 const pTest = pifyTape(test)
 
+const pResize = promisify(resize)
 
 pTest('emits erros on invalid input', async (t) => {
 	const plugin = createPlugin()
@@ -232,6 +236,18 @@ pTest('formatOptions are passed to sharp', async (t) => {
 	}));
 
 	t.end()
+})
+
+pTest('metadata: true works', async (t) => {
+	const file = await vFile.read(src)
+	const res = await pResize(file, {metadata: true})
+
+	const meta = await sharp(res.contents).metadata()
+	t.equal(meta.hasProfile, true)
+
+	const exif = await parseExif(meta.exif)
+	t.equal(exif.image.XResolution, 300)
+	t.equal(exif.exif.PixelXDimension, 2100)
 })
 
 // todo: >1 files
