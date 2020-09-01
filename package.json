@@ -30,7 +30,7 @@
 	"dependencies": {
 		"exif-reader": "^1.0.3",
 		"plugin-error": "^1.0.1",
-		"sharp": "^0.25.2",
+		"sharp": "^0.26.0",
 		"through2": "^4.0.2"
 	},
 	"devDependencies": {
