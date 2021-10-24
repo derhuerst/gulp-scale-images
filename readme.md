@@ -68,7 +68,7 @@ const through = require('through2')
 const scaleImages = require('gulp-scale-images')
 
 const computeScaleInstructions = (file, _, cb) => {
-	readMetadata(file.path, (err, meta) => {
+	readMetadata(file, (err, meta) => {
 		if (err) return cb(err)
 		file = file.clone()
 		file.scale = {
