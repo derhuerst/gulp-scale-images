@@ -34,6 +34,7 @@
 		"through2": "^4.0.2"
 	},
 	"devDependencies": {
+		"eslint": "^8.23.0",
 		"flat-map": "^1.0.0",
 		"p-event": "^4.1.0",
 		"tape": "^5.0.0",
@@ -42,7 +43,8 @@
 		"vinyl-file": "^3.0.0"
 	},
 	"scripts": {
+		"lint": "eslint .",
 		"test": "node test/index.js",
-		"prepublishOnly": "npm test"
+		"prepublishOnly": "npm run lint && npm test"
 	}
 }

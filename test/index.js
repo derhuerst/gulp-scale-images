@@ -203,7 +203,6 @@ pTest('formatOptions are passed to sharp', async (t) => {
 	const file1 = file.clone()
 	const scale1 = {
 		format: 'webp',
-		maxWidth: 100,
 		formatOptions: {
 			quality: 80
 		},
@@ -219,7 +218,6 @@ pTest('formatOptions are passed to sharp', async (t) => {
 	const file2 = file.clone()
 	const scale2 = {
 		format: 'webp',
-		maxWidth: 100,
 		formatOptions: {
 			quality: 100
 		},
