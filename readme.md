@@ -58,6 +58,8 @@ gulp.src('src/*.{jpeg,jpg,png,gif}')
 .pipe(gulp.dest(…))
 ```
 
+*Note:* Unlike `sharp`, `gulp-scale-image` is *not* designed to process untrusted user input. For example, it turns off `sharp`'s [input pixel limit](https://github.com/lovell/sharp/issues/1381#issuecomment-423182487) altogether.
+
 ### Definining scale instructions based on metadata
 
 You can let `gulp-scale-images` read the image metadata first, to device what to do with the file:
