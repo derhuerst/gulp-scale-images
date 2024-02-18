@@ -25,12 +25,12 @@
 	"bugs": "https://github.com/derhuerst/gulp-scale-images/issues",
 	"license": "ISC",
 	"engines": {
-		"node": ">=14"
+		"node": ">=14.15"
 	},
 	"dependencies": {
 		"exif-reader": "^2.0.1",
 		"plugin-error": "^2.0.0",
-		"sharp": "^0.30.0",
+		"sharp": "^0.32.6",
 		"through2": "^4.0.2"
 	},
 	"devDependencies": {
