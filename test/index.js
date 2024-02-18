@@ -244,8 +244,8 @@ pTest('metadata: true works', async (t) => {
 	t.equal(meta.hasProfile, true)
 
 	const exif = await parseExif(meta.exif)
-	t.equal(exif.image.XResolution, 300)
-	t.equal(exif.exif.PixelXDimension, 2100)
+	t.equal(exif.Image.XResolution, 300)
+	t.equal(exif.Photo.PixelXDimension, 2100)
 })
 
 // todo: >1 files
